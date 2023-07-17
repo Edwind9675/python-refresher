@@ -1,5 +1,5 @@
 import numpy as np
-
+import math
 g = 9.81 #m/s^2
 
 
@@ -52,9 +52,11 @@ def calculate_angular_acceleration(tau, I):
       return aac 
 
 def calculate_torque(F_magnitude, F_direction, r):
+     
        """calculates the torque applied to an object given the force applied to it and 
        the distance from the axis of rotation to the point where the force is applied."""
-       torque = r*F_magnitude* np.cos(F_direction) + r*F_magnitude* np.sin(F_direction)
+       F_dir = np.deg2rad(F_direction)
+       torque = r*F_magnitude* np.cos(F_dir) + r*F_magnitude* np.sin(F_dir)
        return torque
 
 def calculate_moment_of_inertia(m, r):
@@ -64,18 +66,48 @@ def calculate_moment_of_inertia(m, r):
        mi = m*r*r
        return mi
 
-def calculate_auv_acceleration(F_magitude, F_angle, mass, volume, thruster_distance):
+def calculate_auv_acceleration(F_magitude, F_angle, mass, volume, thruster_distance=100):
        """calculates the acceleration of the AUV in the 2D plane."""
-       mass = 100 #kg
-       volume = 0.1 #m^3
-       accx = F_magitude*np.cos(F_angle) / mass
-       accy = F_magitude*np.sin(F_angle) / mass
+       #mass = 100 #kg
+       #volume = 0.1 #m^3
+       accx = F_magitude*np.cos(F_angle)*thruster_distance / mass
+       accy = F_magitude*np.sin(F_angle)*thruster_distance / mass
        acc_total = accx + accy 
-       return acc_total
+       return np.array([[accx], [accy]]),
 
-def calculate_auv_angular_acceleration(F_magnitude, F_angle, intertia, thruster_disance):
+def calculate_auv_angular_acceleration(F_magnitude, F_angle, intertia, thruster_distance):
        """calculates the angular acceleration of the AUV."""
-       angular_acc = calculate_torque.torque()*thruster_disance / intertia 
+       angular_acc = calculate_torque.torque(F_magnitude, F_angle, thruster_distance)*thruster_distance / intertia 
        return angular_acc
 
-def calculate_auv2_acceleration(np.ndarray(T))
+
+def calculate_auv2_acceleration(T, alpha, mass, theta):
+       """"Calculate the acceleration of an AUV given it has 4 thrusters"""
+       """alpha is the system angle in degree, T is a 4x1 matrix, and mass in kg, theta is the global angle in degree"""
+       if T.shape == (4, 1):
+              component_matrix= np.array(
+                    [ [np.cos(alpha), np.cos(alpha), -np.cos(alpha), -np.cos(alpha)],
+                     [np.sin(alpha), -np.sin(alpha), -np.sin(alpha), np.sin(alpha)] ]
+              ) 
+              rotation_matrix= np.array(
+                    [ [np.cos(theta), -np.sin(theta)],
+                     [np.sin(theta), np.cos(theta)] ]
+              ) 
+              fxyprime = np.matmul(component_matrix, T) 
+              
+              acceleration_fxy = np.matmul(fxyprime, rotation_matrix)/mass
+              
+              acceleration_mag = math.sqrt(sum(pow(element, 2) for element in acceleration_fxy))
+              return acceleration_fxy
+
+def calculate_auv2_angular_acceleration(T, L, l, alpha, inertia):
+       """Calculate the angular acceleration of a 4 thruster AUV, aka the torque acceleration"""
+       component_matrix= np.array(
+                    [ [np.cos(alpha), np.cos(alpha), -np.cos(alpha), -np.cos(alpha)],
+                     [np.sin(alpha), -np.sin(alpha), -np.sin(alpha), np.sin(alpha)] ]
+              ) 
+       force_fxy = np.matmul(component_matrix, T)
+       accl = np.array([force_fxy[0] / inertia, force_fxy[1] / inertia])
+       r = np.sqrt(L*L +l*l)
+       mag = np.sqrt(force_fxy[0]**2 + force_fxy[1]**2)
+       return calculate_torque(mag, alpha, r)
