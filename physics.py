@@ -159,13 +159,14 @@ def simulation_auv2_motion(T, alpha, L, l, inertia=100, dt=.1, t_final=10, x0=0,
               "omega": omega, 
               "time": time
        }
-                     return physicsdict
+       return physicsdict
 
-def plot(a, velocity, x, y, theta, omega, time)
-plt.plot(time, position, label="Position")
-plt.plot(time, velocity, label="Velocity")
-plt.plot(time, acceleration, label="Acceleration")
-plt.xlabel("Time (s)")
-plt.ylabel("Position (m), Velocity (m/s), Acceleration (m/s^2)")
-plt.legend()
-plt.show()
+def plot(a, velocity, x, y, theta, omega, time):
+       plt.plot(time, a, label="Acceleration(m/s^2)")
+       plt.plot(time, velocity, label="Velocity(m/s)")
+       plt.plot(time, theta, label="Direction(rad)")
+       plt.plot(x, y, label = "position")
+       plt.xlabel("Time (s)")
+       plt.ylabel("theta(rad), Velocity (m/s), Acceleration (m/s^2)")
+       plt.legend()
+       plt.show()

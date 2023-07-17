@@ -1,5 +1,6 @@
 import unittest
 import physics
+import numpy as np
 
 #phy = physics()
 
@@ -53,7 +54,10 @@ class TestPhysics(unittest.TestCase):
         self.assertNotEqual(physics.calculate_auv2_angular_acceleration([[1]
                                                               [1]
                                                               [1]
-                                                              [1]], 1, 1, 0, 1), 0)          
+                                                              [1]], 1, 1, 0, 1), 0)
+
+   
+          
 if __name__ == "__main__":                                                                                                                               
     if __name__ == "__main__":
         unittest.main()
