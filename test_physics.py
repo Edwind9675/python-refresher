@@ -56,8 +56,13 @@ class TestPhysics(unittest.TestCase):
                                                               [1]
                                                               [1]], 1, 1, 0, 1), 0)
 
-   
-          
+    def test_auv2_motion(self):
+        tup = physics.simulation_auv2_motion(([1], [3], [5], [7]), np.pi/3, 2, 3, 100, .1, 10, 0, 0, 0)
+        self.assertTrue(
+            np.allclose(
+            np.array(tup[1]), 
+            )
+        )
 if __name__ == "__main__":                                                                                                                               
     if __name__ == "__main__":
         unittest.main()

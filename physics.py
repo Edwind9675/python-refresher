@@ -97,7 +97,7 @@ def calculate_auv2_acceleration(T, alpha, mass, theta):
               ) 
               fxyprime = np.matmul(component_matrix, T) 
               
-              acceleration_fxy = np.matmul(fxyprime, rotation_matrix)/mass
+              acceleration_fxy = (np.matmul(fxyprime, rotation_matrix))/mass
               
               acceleration_mag = math.sqrt(sum(pow(element, 2) for element in acceleration_fxy))
               return acceleration_fxy
